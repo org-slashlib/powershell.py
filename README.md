@@ -1,7 +1,9 @@
 # Powershell for python projects #
 
 A collection of functions to setup a python development environment and run
-a few basic commands.
+a few basic commands. Intended for being run in
+[termination](https://atom.io/packages/termination), which is a plugin for
+[Atom](https://atom.io/)
 
 ## prerequisites ##
 
@@ -14,7 +16,7 @@ This guide assumes, that you are familiar with the use of python venv, pip,
 twine, wheel and mypy  
 
 1. Follow the recommendated folderstructure below:  
-```ps
+```bat
 # folder structure
 <some folder>
   +-- <folder for python projects>
