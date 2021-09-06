@@ -208,36 +208,64 @@ function Report-PythonEnvironment {
 }
 
 function Switch-PythonEnvironment {
+  param (
+    [switch]$NoUpgradeHint
+  )
+
   $VirtualPy = "$env:PyVersion\Scripts\activate"
   if (Test-Path $VirtualPy -PathType leaf) {
       & $VirtualPy
+
+      if ( $NoUpgradeHint -eq $false ) {
+           Write-Host -ForeGround Yellow "Consider running 'Upgrade-PythonPackages' to update outdated packages"
+      }
   }
   else {
-      [Console]::ForegroundColor = "yellow"
-      [Console]::Error.WriteLine( "No virtual python environment. Maybe run 'Install-PythonEnvironment'?" )
-      [Console]::ResetColor()
+      Write-Host -ForeGround Yellow "No virtual python environment. Maybe run 'Install-PythonEnvironment'?"
   }
 }
 
-# python -m pip install --upgrade pip
-# pip install --upgrade setuptools
-# pip install build
-# pip install twine
-# pip install wheel
-# pip install mypy
-function Upgrade-PythonEnvironment {
+# always install and upgrade the following python packages
+$piprequired = @( 'build', 'twine', 'wheel', 'mypy', 'Sphinx',
+                  'sphinxcontrib-napoleon', 'sphinx-markdown-builder' )
+
+function Install-PythonPackages {
+  # the following packages are expected not to be installed yet
+  $packages = $piprequired
+
+  # pip is already there - upgrade it
+  Write-Host -ForeGround Green "Upgrading python package 'pip' (Step 1 of $( $packages.count + 2 )) ..."
   python -m pip install --upgrade pip | Out-Default
+
+  # setuptools are already there - upgrade them
+  Write-Host -ForeGround Green "Upgrading python package 'setuptools' (Step 2 of $( $packages.count + 2 )) ..."
   pip install --upgrade setuptools | Out-Default
-  pip install build | Out-Default
-  pip install twine | Out-Default
-  pip install wheel | Out-Default
-  pip install mypy | Out-Default
+
+  # now install what's missing ...
+  $packages | % { $index = 0 } {
+    $index++
+    Write-Host -ForeGround Green "Installing python package '$PSItem' (Step $( $index + 2 ) of $( $packages.count + 2 )) ..."
+    pip install $PSItem | Out-Default
+  }
+}
+
+function Upgrade-PythonPackages {
+  $packages = , 'setuptools' + $piprequired
+
+  Write-Host -ForeGround Green "Upgrading python package 'pip' (Step 1 of $( $packages.count + 1 )) ..."
+  python -m pip install --upgrade pip | Out-Default
+
+  # now upgrade packages from list ...
+  $packages | % { $index = 0 } {
+    $index++
+    Write-Host -ForeGround Green "Installing python package '$PSItem' (Step $( $index + 1 ) of $( $packages.count + 1 )) ..."
+    pip install --upgrade $PSItem | Out-Default
+  }
 }
 
 function Install-PythonEnvironment {
+  Write-Host -ForeGround Green "Installing python virtual environment. This will take a minute ..."
   python -m venv "$env:PyVersion"
-  Switch-PythonEnvironment
-  [Console]::ForegroundColor = "yellow"
-  [Console]::Error.WriteLine( "Consider running 'Upgrade-PythonEnvironment' to update outdated packages (build, twine, pip, setuptools)" )
-  [Console]::ResetColor()
+  Switch-PythonEnvironment -NoUpgradeHint
+  Install-PythonPackages
 }
