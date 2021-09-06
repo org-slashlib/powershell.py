@@ -37,7 +37,7 @@ twine, wheel and mypy
 ## commands ##
 * <b style="color: orange">Install-PythonEnvironment</b>  
   Run this (first) to install the python virtual environment.
-* <b style="color: orange">Upgrade-PythonEnvironment</b>  
+* <b style="color: orange">Install-PythonPackages</b>  
   Run this (second) if you want to:
   * get the <code>pip</code> package updated
   * get the <code>setuptools</code> package updated
@@ -45,6 +45,9 @@ twine, wheel and mypy
   * get the package <code>twine</code> installed
   * get the package <code>wheel</code> installed
   * get the package <code>mypy</code> installed
+  * get the package <code>Sphinx</code> installed and its dependents.
+* <b style="color: orange">Upgrade-PythonPackages</b>  
+  Run this later, if you want to keep the installed packages (s.a.) up to date.
 * <b style="color: orange">install</b>  
   Run this to install the project with its packages to enable self referencing (required for running tests)
 * <b style="color: orange">build</b>  
