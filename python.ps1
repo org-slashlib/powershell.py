@@ -267,5 +267,5 @@ function Install-PythonEnvironment {
   Write-Host -ForeGround Green "Installing python virtual environment. This will take a minute ..."
   python -m venv "$env:PyVersion"
   Switch-PythonEnvironment -NoUpgradeHint
-  Install-PythonPackages
+  Write-Host -ForeGround Yellow "Consider running 'Install-PythonPackages' to install missing python packages"
 }
